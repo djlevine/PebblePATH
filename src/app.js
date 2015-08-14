@@ -8,10 +8,11 @@ var UI = require('ui');
 var ajax = require('ajax');
 var station;
 var dir;
-var minutes = 20;
+var minutes;
 var newarkbnd = 'World Trade Center\nExchange Place\nGrove Street\nJournal Square\nHarrison\nNewark Penn Station';
 var wtcbnd = 'Newark Penn Station\nHarrison\nJournal Square\nGrove Street\nExchange Place\nWorld Trade Center';
 var helpdsp = 'This app displays information for trains arriving '+minutes+' minutes from the current time. \n\n PebblePATH is not in anyway associated with Port Authority, Port Authority Tran-Hudson, or any subsidiaries. \n\n (C)2015 Doug Levine \n DLevine.us';
+var times = [];
 /*
   Pebble.addEventListener('showConfiguration', function(e) {
   // Show config page
@@ -38,6 +39,7 @@ Pebble.addEventListener("webviewclosed",
   }
 );
 */
+
 // Make a list of menu items
 var direction = [{
         title: 'PebblePath',
@@ -51,11 +53,7 @@ var direction = [{
         subtitle: 'WTC, Exch, Grove, JSQ, Hrrsn, Nwk'
       }, {
         title: 'Help',
-        subtitle: ''
-      }
-                 
-];
-
+        subtitle: ''}];
 
 var stations = [{
         title: 'Newark Penn',
@@ -121,6 +119,7 @@ schedulemenu.show();
 
 // Add a click listener for select button click
 schedulemenu.on('select', function(event) {
+  'use strict';
   dir = direction[event.itemIndex].title;
   if(dir == "PebblePath"){schedulemenu.show();}
   else if(dir == "Help"){Help.show();}
@@ -129,6 +128,7 @@ schedulemenu.on('select', function(event) {
 
 // Add a click listener for select button click
 schedulemenu.on('longSelect', function(event) {
+  'use strict';
  dir = direction[event.itemIndex].title;
   if(dir == "WTC Bound"){wtcbound.show();}
   else if(dir == "Newark Bound"){nwkbound.show();}
@@ -138,18 +138,17 @@ schedulemenu.on('longSelect', function(event) {
 
 // Add a click listener for select button click
 stationsmenu.on('select', function(event) {
+  'use strict';
   station =  stations[event.itemIndex].title;
   card.show();
   stationTime(station, dir, minutes);
  });
 
 function stationTime(station,dir,minutes){
+    'use strict';
 // Construct URL
 var cityName = station;
 var URL = 'http://dlevine.us/pathdata/pathsched.php?q='+cityName+'&dir='+dir+'&min='+minutes+'&iswatch=true';
-var time0;
-var time1;
-var time2;
 // Make the request
   ajax(
     {
@@ -158,23 +157,18 @@ var time2;
     },
     function(data) {
       // Success!
-      
       var title = "Scheduled for:";
-      var empty = "";
-      time0 = data.time0;
-      time1 = data.time1;
-      time2 = data.time2;
-      if (!!time0) {time0 = data.time0;}
-      else{time0='No trains scheduled to arrive in the next '+minutes+' minutes.';}
-      if (!!time1) {time1 = data.time1;}
-      else{time1='';}
-      if (!!time2) {time2 = data.time2;}
-      else{time2='';}
-  
+      var empty = "";    
+      for (var key in data) {
+        if (data.hasOwnProperty(key)){		
+          times.push(data[key]);
+        }
+			}
+      times = times.join("\n");
       // Show to user
       card.title(title);
       card.subtitle(empty);
-      card.body(time0+'\n'+time1+'\n'+time2);
+      card.body(times);
     },
     function(error) {
       // Failure!
@@ -185,7 +179,4 @@ var time2;
       card.subtitle(empty);
       card.body(sub);
     }
-  );
-} 
-
-
+  );}
