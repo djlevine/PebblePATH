@@ -17,7 +17,11 @@ if (localStorage.getItem(1) === null || localStorage.getItem(1) === undefined){
     minutes= localStorage.getItem(1);
 } 
 else {minutes = localStorage.getItem(1);}
-var helpdsp = 'This app displays information for trains arriving in the time specified in the settings (the default is 20 minutes). \n\n PebblePATH is not in anyway associated with Port Authority, Port Authority Tran-Hudson, or any subsidiaries. \n\n (C)2015 Doug Levine \n DLevine.us';
+var helpdsp = 'This app displays information for trains arriving'+
+    ' in the time specified in the settings (the default is 20 minutes)'+
+    '. \n\n PebblePATH is not in anyway associated with Port Authority,'+
+    ' Port Authority Tran-Hudson, or any subsidiaries. \n\n (C)2015 DJ'+
+    ' Levine \n DLevine.us';
 
 // Make a list of menu items
 var direction = [{
