@@ -14,7 +14,7 @@ var wtcbnd = 'Newark Penn Station\nHarrison\nJournal Square\nGrove Street\nExcha
 var times = [];
 if (localStorage.getItem(1) === null || localStorage.getItem(1) === undefined){
     localStorage.setItem(1, '20');
-    minutes= localStorage.getItem(1);
+    minutes = localStorage.getItem(1);
 } 
 else {minutes = localStorage.getItem(1);}
 var helpdsp = 'This app displays information for trains arriving'+
@@ -92,7 +92,7 @@ var card = new UI.Card({
   subtitle:'Fetching...',
   body:'',
   scrollable: true,
-  style: 'small'
+  style: 'large'
 });
 
 var wtcbound = new UI.Card({
@@ -161,7 +161,8 @@ settingsmenu.on('select', function(event) {
 function stationTime(station,dir,minutes){
 // Construct URL
 card.show();
-var URL = 'http://dlevine.us/pathdata/pathsched.php?q='+station+'&dir='+dir+'&min='+minutes+'&iswatch=true';
+var URL = 'http://dlevine.us/pathdata/pathsched.php?q=' + station + '&dir=' + dir + '&min=' + minutes + '&iswatch=true';
+  URL = encodeURI(URL);
 // Make the request
   ajax(
     {
@@ -173,8 +174,8 @@ var URL = 'http://dlevine.us/pathdata/pathsched.php?q='+station+'&dir='+dir+'&mi
       var title = 'Scheduled for:';
       var key;
       times = [];
-      var empty = "";    
-      for(key in data) {
+      var empty = '';    
+      for(key in data) { 
         if (data.hasOwnProperty(key)){		
             times.push(data[key]);
         }
