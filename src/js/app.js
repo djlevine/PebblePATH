@@ -26,8 +26,8 @@ var helpdsp = 'This app displays information for trains arriving'+
 // Make a list of menu items
 var direction = [{
         title: 'PebblePath',
-        icon: 'images/menu_icon.png',
-        subtitle: 'Train Schedule'
+        icon: 'images/PATHicon.png',
+        subtitle: 'NWK-WTC Line'
       }, {
         title: 'WTC Bound',
         subtitle: 'Nwk, Hrrsn, JSQ, Grove, Exc, WTC'
@@ -125,16 +125,16 @@ var stationsmenu = new UI.Menu({
 
 schedulemenu.show();
 
-// Add a click listener for select button click
+// Add a click listener for main menu
 schedulemenu.on('select', function(event) {
   dir = direction[event.itemIndex].title;
-  if (dir == 'PebblePath'){schedulemenu.show();}
+  if (dir == 'PebblePath'){quickTime(minutes);}
   else if (dir == 'Settings'){settingsmenu.show();}
   else if (dir == 'Help'){Help.show();}
   else {stationsmenu.show();}
 });
 
-// Add a click listener for select button click
+// Add a long click listener for main menu
 schedulemenu.on('longSelect', function(event) {
   dir = direction[event.itemIndex].title;
   if (dir == 'WTC Bound'){wtcbound.show();}
@@ -162,6 +162,7 @@ function stationTime(station,dir,minutes){
 // Construct URL
 card.show();
 var URL = 'http://dlevine.us/pathdata/pathsched.php?q=' + station + '&dir=' + dir + '&min=' + minutes + '&iswatch=true';
+var empty = '';
   URL = encodeURI(URL);
 // Make the request
   ajax(
@@ -174,7 +175,7 @@ var URL = 'http://dlevine.us/pathdata/pathsched.php?q=' + station + '&dir=' + di
       var title = 'Scheduled for:';
       var key;
       times = [];
-      var empty = '';    
+    
       for(key in data) { 
         if (data.hasOwnProperty(key)){		
             times.push(data[key]);
@@ -189,6 +190,64 @@ var URL = 'http://dlevine.us/pathdata/pathsched.php?q=' + station + '&dir=' + di
     function(error) {
       // Failure!
       var title = 'PebblePATH';
+      //var empty = '';
+      var sub = 'is currently unable to retrieve schedule data.';
+      card.title(title);
+      card.subtitle(URL);
+      card.body(sub);
+    }
+  );}
+
+
+function quickTime(minutes){
+  //Quick card
+  var quick = new UI.Card({
+  title:'Information',
+  subtitle:'Fetching...',
+  body:'',
+  scrollable: true,
+  style: 'large'
+});
+quick.show();
+
+var title;
+var d = new Date();
+var n = d.getHours();
+  quikdir(n);
+  
+  function quikdir(n){
+  if (n<12){dir='WTC Bound';station='Harrison';title='Towards WTC';}
+  else if(n>12){dir='Newark Bound';station='World Trade Center';title='Towards Hrrsn';}
+    else{}}
+  
+// Construct URL
+var URL = 'http://dlevine.us/pathdata/pathsched.php?q=' + station + '&dir=' + dir + '&min=' + minutes + '&iswatch=true';
+  URL = encodeURI(URL);
+// Make the request
+  ajax(
+    {
+      url: URL,
+      type: 'json'
+    },
+    function(data) {
+      // Success!
+      var key;
+      times = [];
+      var empty = '';    
+      for(key in data) { 
+        if (data.hasOwnProperty(key)){		
+            times.push(data[key]);
+        }
+			}
+      times = times.join('\n');
+      // Show to user
+      quick.title(title);
+      quick.subtitle(empty);
+      quick.body(times);
+    },
+    function(error) {
+      // Failure!
+      title = 'PebblePATH';
       //var empty = '';
       var sub = 'is currently unable to retrieve schedule data.';
       card.title(title);
