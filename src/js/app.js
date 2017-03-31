@@ -27,19 +27,25 @@ var helpdsp = 'This app displays information for trains arriving'+
 var direction = [{
         title: 'PebblePath',
         icon: 'images/PATHicon.png',
-        subtitle: 'NWK-WTC Line'
+        subtitle: 'NWK-WTC Line',
+        value: 'PebblePath'
       }, {
         title: 'WTC Bound',
-        subtitle: 'Nwk, Hrrsn, JSQ, Grove, Exc, WTC'
+        subtitle: 'Nwk, Hrrsn, JSQ, Grove, Exc, WTC',
+        value: 'worldtradecenterbound'
       }, {
         title: 'Newark Bound',
-        subtitle: 'WTC, Exch, Grove, JSQ, Hrrsn, Nwk'
+        subtitle: 'WTC, Exch, Grove, JSQ, Hrrsn, Nwk',
+        value: 'newarkpennbound',
       },{
         title: 'Settings',
-        subtitle: 'Trains within '+minutes+' min.'
+        subtitle: 'Trains within '+minutes+' min.',
+        value: 'Settings'
       },{
         title: 'Help',
-        subtitle: ''}];
+        subtitle: '',
+        value: 'Help'
+      }];
 
 var stations = [{
         title: 'Newark Penn',
@@ -127,7 +133,7 @@ schedulemenu.show();
 
 // Add a click listener for main menu
 schedulemenu.on('select', function(event) {
-  dir = direction[event.itemIndex].title;
+  dir = direction[event.itemIndex].value;
   if (dir == 'PebblePath'){quickTime(minutes);}
   else if (dir == 'Settings'){settingsmenu.show();}
   else if (dir == 'Help'){Help.show();}
@@ -216,8 +222,8 @@ var n = d.getHours();
   quikdir(n);
   
   function quikdir(n){
-  if (n<12){dir='WTC Bound';station='Harrison';title='Towards WTC';}
-  else if(n>12){dir='Newark Bound';station='World Trade Center';title='Towards Hrrsn';}
+  if (n<12){dir='worldtradecenterbound';station='Harrison';title='Towards WTC';}
+  else if(n>12){dir='newarkpennbound';station='World Trade Center';title='Towards Hrrsn';}
     else{}}
   
 // Construct URL
