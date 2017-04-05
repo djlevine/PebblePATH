@@ -32,11 +32,11 @@ var direction = [{
       }, {
         title: 'WTC Bound',
         subtitle: 'Nwk, Hrrsn, JSQ, Grove, Exc, WTC',
-        value: 'worldtradecenterbound'
+        value: 'World Trade Center'
       }, {
         title: 'Newark Bound',
         subtitle: 'WTC, Exch, Grove, JSQ, Hrrsn, Nwk',
-        value: 'newarkpennbound',
+        value: 'Newark',
       },{
         title: 'Settings',
         subtitle: 'Trains within '+minutes+' min.',
@@ -49,22 +49,28 @@ var direction = [{
 
 var stations = [{
         title: 'Newark Penn',
-        subtitle: 'Newark, NJ'
+        subtitle: 'Newark, NJ',
+        value:'26733'
       }, {
         title: 'Harrison',
-        subtitle: 'Harrison, NJ'
+        subtitle: 'Harrison, NJ',
+        value:'26729'
       }, {
         title: 'Journal Square',
-        subtitle: 'Jersey City, NJ'
+        subtitle: 'Jersey City, NJ',
+        value:'26731'
       }, {
         title: 'Grove Street',
-        subtitle: 'Jersey City, NJ'
+        subtitle: 'Jersey City, NJ',
+        value:'26728'
       }, {
         title: 'Exchange Place',
-        subtitle: 'Jersey City, NJ'
+        subtitle: 'Jersey City, NJ',
+        value:'26727'
       }, {
         title: 'World Trade Center',
-        subtitle: 'Manhattan, NY'
+        subtitle: 'Manhattan, NY',
+        value:'26734'
       }];
 
 var settingsop= [{
@@ -151,7 +157,7 @@ schedulemenu.on('longSelect', function(event) {
 
 // Add a click listener for select button click
 stationsmenu.on('select', function(event) {
-  station = stations[event.itemIndex].title;
+  station = stations[event.itemIndex].value;
   stationTime(station, dir, minutes);
  });
 
@@ -167,7 +173,8 @@ settingsmenu.on('select', function(event) {
 function stationTime(station,dir,minutes){
 // Construct URL
 card.show();
-var URL = 'http://dlevine.us/pathdata/pathsched.php?q=' + station + '&dir=' + dir + '&min=' + minutes + '&iswatch=true';
+var URL = 'http://dlevine.us/pathdata/pathsched.php?q=' + station + '&dir=' + dir + '&min=' + minutes + '&isApp=true';
+  console.log(URL);
 var empty = '';
   URL = encodeURI(URL);
 // Make the request
@@ -222,12 +229,12 @@ var n = d.getHours();
   quikdir(n);
   
   function quikdir(n){
-  if (n<12){dir='worldtradecenterbound';station='Harrison';title='Towards WTC';}
-  else if(n>12){dir='newarkpennbound';station='World Trade Center';title='Towards Hrrsn';}
+  if (n<12){dir='World Trade Center';station='26729';title='Towards WTC';}
+  else if(n>12){dir='Newark';station='26734';title='Towards Hrrsn';}
     else{}}
   
 // Construct URL
-var URL = 'http://dlevine.us/pathdata/pathsched.php?q=' + station + '&dir=' + dir + '&min=' + minutes + '&iswatch=true';
+var URL = 'http://dlevine.us/pathdata/pathsched.php?q=' + station + '&dir=' + dir + '&min=' + minutes + '&isApp=true';
   URL = encodeURI(URL);
 // Make the request
   ajax(
