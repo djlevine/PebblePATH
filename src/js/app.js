@@ -27,7 +27,7 @@ var helpdsp = 'This app displays information for trains arriving'+
 var direction = [{
         title: 'PebblePath',
         icon: 'images/PATHicon.png',
-        subtitle: 'NWK-WTC Line',
+        subtitle: '',
         value: 'quickSchedule'
       }, {
         title: 'WTC Bound',
@@ -161,7 +161,7 @@ var Help = new UI.Card({
 });
 
 var stationsmenu = new UI.Menu({
-    highlightBackgroundColor:varHlColor,
+  highlightBackgroundColor:varHlColor,
     sections: [{
       items: stations
   }]
@@ -250,3 +250,61 @@ var empty = '';
       card.body(sub);
     }
   );}
+
+
+// function quickTime(minutes){
+//   //Quick card
+//   var quick = new UI.Card({
+//   title:'Information',
+//   subtitle:'Fetching...',
+//   body:'',
+//   scrollable: true,
+//   style: 'large'
+// });
+// quick.show();
+
+// var title;
+// var d = new Date();
+// var n = d.getHours();
+//   quikdir(n);
+  
+//   function quikdir(n){
+//   if (n<12){dir='World Trade Center';station='26729';title='Towards WTC';}
+//   else if(n>12){dir='Newark';station='26734';title='Towards Hrrsn';}
+//     else{}}
+  
+// // Construct URL
+// var URL = 'http://dlevine.us/pathdata/pathsched.php?q=' + station + '&dir=' + dir + '&min=' + minutes + '&isApp=true';
+//   URL = encodeURI(URL);
+// // Make the request
+//   ajax(
+//     {
+//       url: URL,
+//       type: 'json'
+//     },
+//     function(data) {
+//       // Success!
+//       var key;
+//       times = [];
+//       var empty = '';    
+//       for(key in data) { 
+//         if (data.hasOwnProperty(key)){		
+//             times.push(data[key]);
+//         }
+// 			}
+//       times = times.join('\n');
+//       // Show to user
+//       quick.title(title);
+//       quick.subtitle(empty);
+//       quick.body(times);
+//     },
+//     function(error) {
+//       // Failure!
+//       title = 'PebblePATH';
+//       //var empty = '';
+//       var sub = 'is currently unable to retrieve schedule data.';
+//       card.title(title);
+//       card.subtitle(URL);
+//       card.body(sub);
+//     }
+//   );}
