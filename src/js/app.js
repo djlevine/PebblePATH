@@ -25,29 +25,29 @@ var helpdsp = 'This app displays information for trains arriving'+
 
 // Make a list of menu items
 var direction = [{
-        title: 'PebblePath',
+        title: 'Line Summary',
         icon: 'images/PATHicon.png',
-        subtitle: '',
-        value: 'quickSchedule'
+        subtitle: 'Choose for details',
+        value: 'PebblePath'
       }, {
-        title: 'WTC Bound',
-        subtitle: 'World Trade Center',
-        stops: 'From Newark:\nNewark Penn Station\nHarrison\nJournal Square\nGrove Street\nExchange Place\nWorld Trade Center\n\nFrom Hoboken:\nHoboken\nNewport\nExchange Place\nWorld Trade Center', 
+        title: 'Newark - WTC',
+        lineColor: feature.color('#FF0000', 'white'),
+        subtitle: 'Newark Penn\nHarrison\nJournal Square\nGrove Street\nExchange Place\nWorld Trade Center', 
         value: 'World Trade Center'
-      }, {
-        title: 'Newark Bound',
-        subtitle: 'Newark Penn',
-        stops: 'From WTC:\nWorld Trade Center\nExchange Place\nGrove Street\nJournal Square\nHarrison\nNewark Penn Station',
-        value: 'Newark',
       },{
-        title: 'Hoboken Bound',
-        subtitle: 'Hoboken Terminal',
-        stops:'From 33rd St:\n33rd St\n23rd St\n14th St\n9th St\ Christopher St\nHoboken\n\n From WTC:\nWorld Trade Center\nExchange Place\nNewport\nHoboken',
+        title: 'Hoboken - WTC',
+        lineColor: feature.color('#00AA55', 'white'),
+        subtitle:'Hoboken\nNewport\nExchange Place\nWorld Trade Center',
         value: 'Hoboken'
       },{
-        title: '33rd St Bound',
-        subtitle: '33rd Street, NY',
-        stops: 'From Journal Square:\nJournal Square\nGrove Street\nNewport\nChristopher St\n9th St\n14th St\n 23rd St\n 33rd St\n\nFrom Hoboken:\nNewport\nChristopher St\n9th St\n14th St\n 23rd St\n 33rd St',
+        title: 'HOB - 33rd St',
+        lineColor: feature.color('#55AAFF', 'white'),
+        subtitle: 'Hoboken\nChristopher St\n9th St\n14th St\n23rd St\n33rd St',
+        value: '33rd Street',
+      },{
+        title: 'JSQ - 33rd St',
+        lineColor: feature.color('#FFAA00', 'white'),
+        subtitle: 'Journal Square\nGrove Street\nNewport\nChristopher St\n9th St\n14th St\n23rd St\n33rd St',
         value: '33rd Street',
       },{
         title: 'Settings',
@@ -60,9 +60,16 @@ var direction = [{
       }];
 
 var stations = [{
+        title: 'PebblePath',
+        icon: 'images/PATHicon.png',
+        subtitle: 'Line summary',
+        value: 'PebblePath',
+        destination:'None'
+      }, {
         title: 'Newark Penn',
         subtitle: 'Newark, NJ',
-        value:'26733'
+        value:'26733',
+        destination:'World Trade Center'
       }, {
         title: 'Harrison',
         subtitle: 'Harrison, NJ',
@@ -111,6 +118,10 @@ var stations = [{
         title: '33rd Street',
         subtitle: 'Manhattan, NY',
         value:'26724'
+      },{
+        title: 'Help',
+        subtitle: '',
+        value: 'Help'
       }
 ];
 
@@ -167,39 +178,43 @@ var stationsmenu = new UI.Menu({
   }]
 });
 
-schedulemenu.show();
+//Kickstart the app!
+stationsmenu.show();
+
 
 // Add a click listener for main menu
 schedulemenu.on('select', function(event) {
-  dir = direction[event.itemIndex].value;
-  if (dir == 'PebblePath'){}//quickTime(minutes);
-  else if (dir == 'Settings'){settingsmenu.show();}
-  else if (dir == 'Help'){Help.show();}
-  else {stationsmenu.show();}
-});
-
-// Add a long click listener for main menu
-schedulemenu.on('longSelect', function(event) {
-  dir = direction[event.itemIndex].value;
-  if (dir == 'Help'){Help.show();}
-  else if(dir=='quickSchedule'){}
+  var opt;
+  console.log("reached select listener");
+  opt = direction[event.itemIndex].value;
+  if (opt == 'Help'){Help.show();}
+  else if(opt=='PebblePath'){}
   else{
     var stopBound = new UI.Card({
-    title: direction[event.itemIndex].subtitle,
-    body: direction[event.itemIndex].stops,
+    backgroundColor: '#000000',
+    titleColor:direction[event.itemIndex].lineColor,
+    title: direction[event.itemIndex].title,
+    bodyColor:'#FFFFFF',
+    body: direction[event.itemIndex].subtitle,
     scrollable: true,
     style: 'small'
     });
     stopBound.show();
   }
- 
 });
 
 // Add a click listener for select button click
 stationsmenu.on('select', function(event) {
   station = stations[event.itemIndex].value;
+  dir = stations[event.itemIndex].destination; //might determine direction by script
+  console.log("station is : " + station + "Direction is: " + dir);
+  if (station == 'PebblePath'){schedulemenu.show(); console.log("Launch schedule menu");}//quickTime(minutes);
+  else if (station == 'Settings'){settingsmenu.show();}
+  else if (station == 'Help'){Help.show();}
+  else {
   stationTime(station, dir, minutes);
- });
+  }
+  });
 
 /*Add a click listener for settings button click*/
 settingsmenu.on('select', function(event) {
@@ -250,61 +265,3 @@ var empty = '';
       card.body(sub);
     }
   );}
-
-
-// function quickTime(minutes){
-//   //Quick card
-//   var quick = new UI.Card({
-//   title:'Information',
-//   subtitle:'Fetching...',
-//   body:'',
-//   scrollable: true,
-//   style: 'large'
-// });
-// quick.show();
-
-// var title;
-// var d = new Date();
-// var n = d.getHours();
-//   quikdir(n);
-  
-//   function quikdir(n){
-//   if (n<12){dir='World Trade Center';station='26729';title='Towards WTC';}
-//   else if(n>12){dir='Newark';station='26734';title='Towards Hrrsn';}
-//     else{}}
-  
-// // Construct URL
-// var URL = 'http://dlevine.us/pathdata/pathsched.php?q=' + station + '&dir=' + dir + '&min=' + minutes + '&isApp=true';
-//   URL = encodeURI(URL);
-// // Make the request
-//   ajax(
-//     {
-//       url: URL,
-//       type: 'json'
-//     },
-//     function(data) {
-//       // Success!
-//       var key;
-//       times = [];
-//       var empty = '';    
-//       for(key in data) { 
-//         if (data.hasOwnProperty(key)){		
-//             times.push(data[key]);
-//         }
-// 			}
-//       times = times.join('\n');
-//       // Show to user
-//       quick.title(title);
-//       quick.subtitle(empty);
-//       quick.body(times);
-//     },
-//     function(error) {
-//       // Failure!
-//       title = 'PebblePATH';
-//       //var empty = '';
-//       var sub = 'is currently unable to retrieve schedule data.';
-//       card.title(title);
-//       card.subtitle(URL);
-//       card.body(sub);
-//     }
-//   );}
