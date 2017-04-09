@@ -39,9 +39,7 @@
     "sdkVersion": "3",
     "shortName": "PebblePath",
     "targetPlatforms": [
-        "aplite",
-        "basalt",
-        "chalk"
+        "basalt"
     ],
     "uuid": "516528ed-b3e2-456e-a1e4-1bc06571f231",
     "versionCode": 1,
