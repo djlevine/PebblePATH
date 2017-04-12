@@ -7,11 +7,14 @@
 var UI = require('ui');
 var ajax = require('ajax');
 var feature = require('platform/feature');
+var Vector2 = require('vector2');
 var station;
 var dir;
 var minutes;//='20';
 var varHlColor = feature.color('#0055AA', 'black');
 var times = [];
+var dest = [];
+var number = 0;
 if (localStorage.getItem(1) === null || localStorage.getItem(1) === undefined){
     localStorage.setItem(1, '20');
     minutes = localStorage.getItem(1);
@@ -25,33 +28,33 @@ var helpdsp = 'This app displays information for trains arriving'+
 
 // Make a list of menu items
 var direction = [{
-        title: 'Line Summary',
+        title: 'PebblePATH',
         icon: 'images/PATHicon.png',
-        subtitle: 'Choose for details',
-        value: 'PebblePath'
+        subtitle: '',
+        value: ''
       }, {
-        title: 'Newark - WTC',
-        lineColor: feature.color('#FF0000', 'white'),
-        subtitle: 'Newark Penn\nHarrison\nJournal Square\nGrove Street\nExchange Place\nWorld Trade Center', 
+        title: 'WTC Bound',
+        subtitle: 'World Trade Center',
+        stops: 'From Newark:\nNewark Penn Station\nHarrison\nJournal Square\nGrove Street\nExchange Place\nWorld Trade Center\n\nFrom Hoboken:\nHoboken\nNewport\nExchange Place\nWorld Trade Center', 
         value: 'World Trade Center'
+      }, {
+        title: 'Newark Bound',
+        subtitle: 'Newark Penn',
+        stops: 'From WTC:\nWorld Trade Center\nExchange Place\nGrove Street\nJournal Square\nHarrison\nNewark Penn Station',
+        value: 'Newark',
       },{
-        title: 'Hoboken - WTC',
-        lineColor: feature.color('#00AA55', 'white'),
-        subtitle:'Hoboken\nNewport\nExchange Place\nWorld Trade Center',
+        title: 'Hoboken Bound',
+        subtitle: 'Hoboken Terminal',
+        stops:'From 33rd St:\n33rd St\n23rd St\n14th St\n9th St\ Christopher St\nHoboken\n\n From WTC:\nWorld Trade Center\nExchange Place\nNewport\nHoboken',
         value: 'Hoboken'
       },{
-        title: 'HOB - 33rd St',
-        lineColor: feature.color('#55AAFF', 'white'),
-        subtitle: 'Hoboken\nChristopher St\n9th St\n14th St\n23rd St\n33rd St',
-        value: '33rd Street',
-      },{
-        title: 'JSQ - 33rd St',
-        lineColor: feature.color('#FFAA00', 'white'),
-        subtitle: 'Journal Square\nGrove Street\nNewport\nChristopher St\n9th St\n14th St\n23rd St\n33rd St',
+        title: '33rd St Bound',
+        subtitle: '33rd Street, NY',
+        stops: 'From Journal Square:\nJournal Square\nGrove Street\nNewport\nChristopher St\n9th St\n14th St\n 23rd St\n 33rd St\n\nFrom Hoboken:\nNewport\nChristopher St\n9th St\n14th St\n 23rd St\n 33rd St',
         value: '33rd Street',
       },{
         title: 'Settings',
-        subtitle: 'Trains within '+minutes+' min.',
+        subtitle: 'Trains within', //'+minutes+' min.',
         value: 'Settings'
       },{
         title: 'Help',
@@ -59,17 +62,16 @@ var direction = [{
         value: 'Help'
       }];
 
+
 var stations = [{
-        title: 'PebblePath',
+        title: 'PebblePATH',
         icon: 'images/PATHicon.png',
-        subtitle: 'Line summary',
-        value: 'PebblePath',
-        destination:'None'
-      }, {
+        subtitle: '',
+        value: ''
+      },{
         title: 'Newark Penn',
         subtitle: 'Newark, NJ',
-        value:'26733',
-        destination:'World Trade Center'
+        value:'26733'
       }, {
         title: 'Harrison',
         subtitle: 'Harrison, NJ',
@@ -119,6 +121,10 @@ var stations = [{
         subtitle: 'Manhattan, NY',
         value:'26724'
       },{
+        title: 'Settings',
+        subtitle: 'Trains within '+minutes+' min.',
+        value: 'Settings'
+      },{
         title: 'Help',
         subtitle: '',
         value: 'Help'
@@ -143,7 +149,9 @@ var settingsop= [{
 var schedulemenu = new UI.Menu({
   highlightBackgroundColor:varHlColor,
   status: {
-      separator: 'dotted'
+      separator: 'dotted',
+      backgroundColor: varHlColor,
+      color: 'white'
   },
   sections: [{
     items: direction
@@ -152,7 +160,24 @@ var schedulemenu = new UI.Menu({
 
 var settingsmenu = new UI.Menu({
   highlightBackgroundColor:varHlColor,
+  status: {
+      separator: 'dotted',
+      backgroundColor: varHlColor,
+      color: 'white'
+  },
   sections: [{items: settingsop}]
+});
+
+var stationsmenu = new UI.Menu({
+  highlightBackgroundColor:varHlColor,
+  status: {
+      separator: 'dotted',
+      backgroundColor: varHlColor,
+      color: 'white'
+  },
+    sections: [{
+      items: stations
+  }]
 });
 
 var card = new UI.Card({
@@ -171,50 +196,46 @@ var Help = new UI.Card({
   style: 'small'
 });
 
-var stationsmenu = new UI.Menu({
-  highlightBackgroundColor:varHlColor,
-    sections: [{
-      items: stations
-  }]
-});
-
-//Kickstart the app!
 stationsmenu.show();
-
 
 // Add a click listener for main menu
 schedulemenu.on('select', function(event) {
-  var opt;
-  console.log("reached select listener");
-  opt = direction[event.itemIndex].value;
-  if (opt == 'Help'){Help.show();}
-  else if(opt=='PebblePath'){}
+  dir = direction[event.itemIndex];
+  if (dir.title == 'PebblePATH'){console.log("PebblePATH Select");}//Nothing right now
+  else if (dir.title == 'Settings'){settingsmenu.show();}
+  else if (dir.title == 'Help'){Help.show();}
+  else {stationsmenu.show();}
+}); //Not currently in use
+
+// Add a long click listener for main menu
+stationsmenu.on('longSelect', function(event) {
+  station = stations[event.itemIndex];
+  if (station.title == 'Help'){Help.show();}
+  else if (station.title == 'Settings'){Help.show();}
+  else if(station.title =='PebblePATH'){console.log("PebblePATH Long Select");}//Nothing right now
   else{
-    var stopBound = new UI.Card({
-    backgroundColor: '#000000',
-    titleColor:direction[event.itemIndex].lineColor,
-    title: direction[event.itemIndex].title,
-    bodyColor:'#FFFFFF',
-    body: direction[event.itemIndex].subtitle,
-    scrollable: true,
-    style: 'small'
-    });
-    stopBound.show();
+//     var stopBound = new UI.Card({
+//     title: station.subtitle,
+//     body: station.stops,
+//     scrollable: true,
+//     style: 'small'
+//     });
+//     stopBound.show();
   }
+ 
 });
 
 // Add a click listener for select button click
 stationsmenu.on('select', function(event) {
-  station = stations[event.itemIndex].value;
-  dir = stations[event.itemIndex].destination; //might determine direction by script
-  console.log("station is : " + station + "Direction is: " + dir);
-  if (station == 'PebblePath'){schedulemenu.show(); console.log("Launch schedule menu");}//quickTime(minutes);
-  else if (station == 'Settings'){settingsmenu.show();}
-  else if (station == 'Help'){Help.show();}
-  else {
-  stationTime(station, dir, minutes);
+  station = stations[event.itemIndex];
+  if (station.title == 'PebblePATH'){console.log("PebblePATH Select");}//Nothing right now
+  else if (station.title == 'Settings'){settingsmenu.show();}
+  else if (station.title == 'Help'){Help.show();}
+  else{
+    station = stations[event.itemIndex];
+    stationTime(station, dir, minutes);
   }
-  });
+ });
 
 /*Add a click listener for settings button click*/
 settingsmenu.on('select', function(event) {
@@ -228,9 +249,8 @@ settingsmenu.on('select', function(event) {
 function stationTime(station,dir,minutes){
 // Construct URL
 card.show();
-var URL = 'http://dlevine.us/pathdata/pathsched.php?q=' + station + '&dir=' + dir + '&min=' + minutes + '&isApp=true';
+var URL = 'http://dlevine.us/pathdata/pathsched.php?q=' + station.value + /*'&dir=' + dir.value + */'&min=' + minutes;// + '&isApp=true';
   console.log(URL);
-var empty = '';
   URL = encodeURI(URL);
 // Make the request
   ajax(
@@ -240,20 +260,82 @@ var empty = '';
     },
     function(data) {
       // Success!
-      var title = 'Scheduled for:';
       var key;
+      dest = [];
       times = [];
     
-      for(key in data) { 
-        if (data.hasOwnProperty(key)){		
-            times.push(data[key]);
+      for(key in data[0]) { 
+        if (data[0].hasOwnProperty(key)){		
+            times.push(data[0][key]);
         }
 			}
-      times = times.join('\n');
+      for(key in data[1]) { 
+        if (data[1].hasOwnProperty(key)){		
+            dest.push(data[1][key]);
+        }
+			}
+     if(times[0] !== ""){/*times = times.join('\n');*/}
+     else{times.push("There are no trains.");} //for returning blank from script
+      
       // Show to user
-      card.title(title);
-      card.subtitle(empty);
-      card.body(times);
+      card.hide();
+      
+      // Create a dynamic window
+      var timeWindow = new UI.Window({
+        status: {
+          separator: 'dotted',
+          backgroundColor: varHlColor,
+          color:'white',
+        },
+        backgroundColor: 'white'
+      });
+      
+      var screenHeight = timeWindow.size().y;
+      var screenWidth = timeWindow.size().x;
+      var titleArea = screenHeight/5.8;
+      var titleBar = new UI.Rect({ 
+        position: new Vector2(0, 0),
+        size: new Vector2(screenWidth, titleArea),
+        backgroundColor: 'black'//feature.color('#0000FF', 'black')
+      });
+      var title = new UI.Text({ 
+        text: station.title,
+        color: feature.color('#FFDD00', 'white'),
+        textAlign: 'center',
+        size: new Vector2(screenWidth, titleArea),
+        position:new Vector2(0, -3),
+        font: 'gothic-24-bold'
+      });
+      var nextTime = new UI.Text({ 
+        text:times[number],
+        color: 'black',
+        textAlign: 'center',
+        size: new Vector2(screenWidth, 30),
+        position:new Vector2(0, titleArea),
+        font: 'gothic-28-bold'
+      }); 
+      var destText = new UI.Text({ 
+        text:'Towards: \n' + dest[number],
+        color: 'black',
+        textAlign: 'center',
+        size: new Vector2(screenWidth, screenHeight - titleArea - 30),
+        position:new Vector2(0, titleArea + 30),
+        font: 'gothic-18-bold'
+      });//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      timeWindow.add(titleBar);
+      timeWindow.add(title);
+      timeWindow.add(nextTime);
+      timeWindow.add(destText);
+      timeWindow.show();
+      timeWindow.on('click', 'up', function() {
+        change("up", timeWindow);
+      });
+      timeWindow.on('click', 'down', function() {
+        change("down", timeWindow);
+      });
+      timeWindow.on('click', 'back', function() {
+        change("back", timeWindow);
+      });
     },
     function(error) {
       // Failure!
@@ -265,3 +347,19 @@ var empty = '';
       card.body(sub);
     }
   );}
+
+function change(button, window){
+  if(button == "up"){number = number + 1;}
+  else if (button == "down"){number = number - 1;}
+  else{
+    console.log("reached other button");
+    stationsmenu.show();
+    card.hide();
+    window.hide();
+    return;
+  }
+  console.log(button + ' clicked! number = ' + number);
+  stationTime(station, dir, minutes);
+  card.show();
+  window.hide();
+}
