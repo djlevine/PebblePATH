@@ -125,16 +125,19 @@ schedulemenu.on('longSelect', function(event) {
 // Add a click listener for select button click
 stationsmenu.on('select', function(event) {
   station = stations[event.itemIndex];
-  //console.log(event.itemIndex);
-  if(event.itemIndex >= 7){
-    dir = "Journal Square";
-  }
   stationTime(station, dir);
  });
 
 function stationTime(station,dir){
 // Construct URL
-card.show();
+  card.show();
+
+  
+  console.log('station = ' + station.jsq + 'dir = ' + dir);
+if(station.jsq >= "yes" && dir=="Newark"){
+    dir = "Journal Square";
+  }
+  
 var URL = 'http://dlevine.us/pathdata/pathsched_legacy.php?q=' + station.value + '&dir=' + dir + '&isApp=true';
   console.log(URL);
   URL = encodeURI(URL);
@@ -156,7 +159,7 @@ var URL = 'http://dlevine.us/pathdata/pathsched_legacy.php?q=' + station.value +
         }
 			}
       //Create the time window for the user++
-      createTimeWindow();
+      createTimeWindow(dir);
     },
     function(error) {
       // Failure!
@@ -170,7 +173,7 @@ var URL = 'http://dlevine.us/pathdata/pathsched_legacy.php?q=' + station.value +
 }
 
 
-function createTimeWindow(){
+function createTimeWindow(dir){
         // Create a dynamic window
       var timeWindow = new UI.Window({
         status: {
