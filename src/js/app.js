@@ -7,127 +7,32 @@ var dir;
 //var minutes = '60';
 var varHlColor = '#0055AA';
 var times = [];
-// var dest = [];
-// var number = 0;
-// if (localStorage.getItem(1) === null || localStorage.getItem(1) === undefined){
-//     localStorage.setItem(1, '20');
-//     minutes = localStorage.getItem(1);
-// } 
-// else {minutes = localStorage.getItem(1);}
+
+if (localStorage.getItem(0) === null || localStorage.getItem(1) === undefined){
+    localStorage.setItem(0, 'A');
+    localStorage.setItem(1, 'A');
+} 
+if (localStorage.getItem(2) === null || localStorage.getItem(2) === undefined){
+    localStorage.setItem(2, 'A');
+    localStorage.setItem(3, 'A');
+} 
+
+
 var helpdsp = 'This app displays information for the next three trains'+
-    ' towards the chosen destination'+
-    '. \n\n PebblePATH is not in anyway associated with Port Authority,'+
+    ' towards the chosen destination.\n Choose your favorite stops by long selecting PebblePATH on the main menu. Access these stops quickly by clicking on PebblePATH again.'+
+    ' \n\n PebblePATH is not in anyway associated with Port Authority,'+
     ' Port Authority Tran-Hudson, or any subsidiaries. \n\n (C)2015 DJ'+
     ' Levine \n DLevine.us';
 
-// Make a list of menu items
-var direction = [{
-        title: 'PebblePath',
-        icon: 'images/PATHicon.png',
-        subtitle: 'Choose a destination:',
-        value: 'quickSchedule'
-      }, {
-        title: 'WTC Oculus',
-        subtitle: 'World Trade Center',
-        stops: 'From Newark:\nNewark Penn Station\nHarrison\nJournal Square\nGrove Street\nExchange Place\nWorld Trade Center\n\nFrom Hoboken:\nHoboken\nNewport\nExchange Place\nWorld Trade Center', 
-        value: 'World Trade Center'
-      }, {
-        title: 'JSQ/Newark Penn',
-        subtitle: 'Jersey City and Newark',
-        stops: 'From WTC:\nWorld Trade Center\nExchange Place\nGrove Street\nJournal Square\nHarrison\nNewark Penn Station',
-        value: 'Newark',
-      },{
-        title: 'Hoboken',
-        subtitle: 'Hoboken Terminal',
-        stops:'From 33rd St:\n33rd St\n23rd St\n14th St\n9th St\ Christopher St\nHoboken\n\n From WTC:\nWorld Trade Center\nExchange Place\nNewport\nHoboken',
-        value: 'Hoboken'
-      },{
-        title: '33rd St',
-        subtitle: '33rd Street, NY',
-        stops: 'From Journal Square:\nJournal Square\nGrove Street\nNewport\nChristopher St\n9th St\n14th St\n 23rd St\n 33rd St\n\nFrom Hoboken:\nNewport\nChristopher St\n9th St\n14th St\n 23rd St\n 33rd St',
-        value: '33rd Street',
-//       },{
-//         title: 'Settings',
-//         subtitle: 'Trains within '+minutes+' min.',
-//         value: 'Settings'
-      },{
-        title: 'Help',
-        subtitle: '',
-        value: 'Help'
-      }];
-
-var stations = [{
-        title: 'Newark Penn',
-        subtitle: 'Newark, NJ',
-        value:'26733'
-      }, {
-        title: 'Harrison',
-        subtitle: 'Harrison, NJ',
-        value:'26729'
-      }, {
-        title: 'Journal Square',
-        subtitle: 'Jersey City, NJ',
-        value:'26731'
-      }, {
-        title: 'Grove Street',
-        subtitle: 'Jersey City, NJ',
-        value:'26728'
-      }, {
-        title: 'Exchange Place',
-        subtitle: 'Jersey City, NJ',
-        value:'26727'
-      }, {
-        title: 'World Trade Center',
-        subtitle: 'Manhattan, NY',
-        value:'26734'
-      }, {
-        title: 'Hoboken',
-        subtitle: 'Hoboken, NJ',
-        value:'26730'
-      }, {
-        title: 'Newport',
-        subtitle: 'Jersey City, NJ',
-        value:'26732'
-      }, {
-        title: 'Christopher Street',
-        subtitle: 'Manhattan, NY',
-        value:'26726'
-      }, {
-        title: '9th Street',
-        subtitle: 'Manhattan, NY',
-        value:'26725'
-      }, {
-        title: '14th Street',
-        subtitle: 'Manhattan, NY',
-        value:'26722'
-      }, {
-        title: '23rd Street',
-        subtitle: 'Manhattan, NY',
-        value:'26723'
-      }, {
-        title: '33rd Street',
-        subtitle: 'Manhattan, NY',
-        value:'26724'
-      }
-];
-
-var settingsop= [{
-          title: '20',
-          subtitle: 'Minutes'
-      }, {
-        title: '30',
-        subtitle: 'Minutes'
-      }, {
-        title: '60',
-        subtitle: 'Minutes'
-      }, {
-        title: '90',
-        subtitle: 'Minutes'
-     }];
-
+// call list of menu items
+var direction =  require('mainMenu.json');
+//call list of stations
+var stations = require('allStations.json');
+//This is just for the faves menu
+var directionLimited = require('directions.json');
 
 var schedulemenu = new UI.Menu({
-  highlightBackgroundColor:varHlColor,
+  highlightBackgroundColor:feature.color(varHlColor, 'black'),
   status: {
       separator: 'dotted'
   },
@@ -136,9 +41,43 @@ var schedulemenu = new UI.Menu({
   }]
 });
 
-var settingsmenu = new UI.Menu({
-  highlightBackgroundColor:varHlColor,
-  sections: [{items: settingsop}]
+var stationsmenu = new UI.Menu({
+  highlightBackgroundColor:feature.color(varHlColor, 'black'),
+    sections: [{
+      items: stations
+  }]
+});
+
+var favDirMorn = new UI.Menu({
+  highlightBackgroundColor:feature.color(varHlColor, 'black'),
+    sections: [{
+      title: 'Towards:',
+      items: directionLimited
+  }]
+});
+
+var favDirEve = new UI.Menu({
+  highlightBackgroundColor:feature.color(varHlColor, 'black'),
+    sections: [{
+      title: 'Towards:',
+      items: directionLimited
+  }]
+});
+
+var mornMenu = new UI.Menu({
+  highlightBackgroundColor:feature.color(varHlColor, 'black'),
+    sections: [{
+      title: 'Morning Favorite:',
+      items: stations
+  }]
+});
+
+var eveMenu = new UI.Menu({
+  highlightBackgroundColor:feature.color(varHlColor, 'black'),
+    sections: [{
+      title: 'Evening Favorite:',
+      items: stations
+  }]
 });
 
 var card = new UI.Card({
@@ -157,20 +96,12 @@ var Help = new UI.Card({
   style: 'small'
 });
 
-var stationsmenu = new UI.Menu({
-  highlightBackgroundColor:varHlColor,
-    sections: [{
-      items: stations
-  }]
-});
-
 schedulemenu.show();
 
 // Add a click listener for main menu
 schedulemenu.on('select', function(event) {
   dir = direction[event.itemIndex].value;
-  if (dir == 'quickSchedule'){quickSchedule();}
-  else if (dir == 'Settings'){settingsmenu.show();}
+  if (dir == 'quickSchedule'){quickScheduleSet();}
   else if (dir == 'Help'){Help.show();}
   else {stationsmenu.show();}
 });
@@ -179,7 +110,7 @@ schedulemenu.on('select', function(event) {
 schedulemenu.on('longSelect', function(event) {
   dir = direction[event.itemIndex].value;
   if (dir == 'Help'){Help.show();}
-  else if(dir=='quickSchedule'){}
+  else if(dir=='quickSchedule'){resetFave();}
   else{
     var stopBound = new UI.Card({
     title: direction[event.itemIndex].subtitle,
@@ -189,7 +120,6 @@ schedulemenu.on('longSelect', function(event) {
     });
     stopBound.show();
   }
- 
 });
 
 // Add a click listener for select button click
@@ -202,19 +132,10 @@ stationsmenu.on('select', function(event) {
   stationTime(station, dir);
  });
 
-/*Add a click listener for settings button click*/
-// settingsmenu.on('select', function(event) {
-//   minutes =  settingsop[event.itemIndex].title;
-//   localStorage.setItem(1, minutes);
-//   schedulemenu.item(0, 3, { subtitle: 'Trains within '+minutes+' min.' });
-//   schedulemenu.show();
-//   settingsmenu.hide();
-//  });
-
 function stationTime(station,dir){
 // Construct URL
 card.show();
-var URL = 'http://dlevine.us/pathdata/pathsched_legacy.php?q=' + station.value + '&dir=' + dir + /*'&min=' + minutes +*/ '&isApp=true';
+var URL = 'http://dlevine.us/pathdata/pathsched_legacy.php?q=' + station.value + '&dir=' + dir + '&isApp=true';
   console.log(URL);
   URL = encodeURI(URL);
 // Make the request
@@ -290,7 +211,7 @@ function createTimeWindow(){
         color: 'black',
         textAlign: 'center',
         size: new Vector2(screenWidth, screenHeight/1.8),
-        position:new Vector2(0, screenHeight/5 + 7),
+        position:new Vector2(0, feature.round(screenHeight/5 + 2, screenHeight/5 + 7)),
         font: 'bitham-42-bold'
       });
       var laterTimes = new UI.Text({ 
@@ -308,7 +229,7 @@ function createTimeWindow(){
         color: 'black',
         textAlign: 'center',
         size: new Vector2(screenWidth, titleArea),
-        position:new Vector2(0,  feature.round(screenHeight - titleArea*3 - 5, screenHeight - titleArea*2 + 10)),
+        position:new Vector2(0, feature.round(screenHeight - titleArea*3 + 1, screenHeight - titleArea*2 + 10)),
         font: 'gothic-14'
       });
       var footerBar = new UI.Rect({ 
@@ -339,7 +260,7 @@ function createTimeWindow(){
       timeWindow.add(destText);
       if (feature.round()) {
         timeWindow.add(roundFooter);
-        timeWindow.remove(scheduledForText);
+        timeWindow.remove(laterTimes);
         console.log('Round display');
       }
       timeWindow.show();
@@ -355,20 +276,63 @@ function createTimeWindow(){
 //       });
 }
 
-function quickSchedule(){
-  console.log('reached quicktime!');
-var d = new Date();
-var n = d.getHours();
-  
-  if (n<12){
-    dir='World Trade Center';
-    station = stations[1];
+function resetFave(){
+  localStorage.setItem(0, 'A');
+  localStorage.setItem(1, 'A');
+  localStorage.setItem(2, 'A');
+  localStorage.setItem(3, 'A');
+  quickScheduleSet();
+}
+
+function quickScheduleSet(){
+  //console.log('reached quicktime!');
+  if (localStorage.getItem(0) == 'A' || localStorage.getItem(2) == 'A'){
+    mornMenu.show();
+   }
+  else{
+    //console.log('Retreived:' + localStorage.getItem(0) + ' ' + localStorage.getItem(1) + ' ' +  localStorage.getItem(2) + ' ' + localStorage.getItem(3));
+    quickScheduleRun();
   }
-  else if(n>12){
-    dir='Journal Square';
-    station=stations[11];
-  }
-    else{}
+  // Add a click listener for select button click 
+mornMenu.on('select', function(event) {
+    var stationIndex = event.itemIndex;
+    localStorage.setItem(0, stationIndex);
+    favDirMorn.show();
+  });
+favDirMorn.on('select', function(event) {
+    var dirIndex = directionLimited[event.itemIndex].value;
+    localStorage.setItem(1, dirIndex);
+    eveMenu.show();
+  });
+eveMenu.on('select', function(event) {
+    var stationIndex = event.itemIndex;
+    localStorage.setItem(2, stationIndex);
+    favDirEve.show();
+  });
+favDirEve.on('select', function(event) {
+    var dirIndex = directionLimited[event.itemIndex].value;
+    localStorage.setItem(3, dirIndex);
+    quickScheduleRun();
+    mornMenu.hide();
+    favDirMorn.hide();
+    eveMenu.hide();
+    favDirEve.hide();
+  });
+    //console.log('set to:' + localStorage.getItem(0) + ' ' + localStorage.getItem(1) + ' ' +  localStorage.getItem(2) + ' ' + localStorage.getItem(3));
+}
+
+function quickScheduleRun(){
+  var d = new Date();
+  var n = d.getHours();
   
+   if (n <= 12){
+    dir = localStorage.getItem(1);
+    station = stations[localStorage.getItem(0)];
+  }
+  else if(n > 12){
+    dir = localStorage.getItem(3);
+    station = stations[localStorage.getItem(2)];
+  }
+  else{ console.log(n + ' Error!'); }
     stationTime(station, dir);
 }
