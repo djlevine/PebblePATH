@@ -325,11 +325,11 @@ function quickScheduleRun(){
   var d = new Date();
   var n = d.getHours();
   
-   if (n <= 12){
+   if (n < 12){
     dir = localStorage.getItem(1);
     station = stations[localStorage.getItem(0)];
   }
-  else if(n > 12){
+  else if(n >= 12){
     dir = localStorage.getItem(3);
     station = stations[localStorage.getItem(2)];
   }
