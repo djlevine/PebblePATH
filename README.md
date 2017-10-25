@@ -1,9 +1,8 @@
 # PebblePATH
-Path Schedule for Pebble and Pebble Steel
-Schedule for Newark to World Trade Center Line
+PebblePATH displays scheduled trains for PATH Train System
 
 The schedule works by prompting the user for an origin and direction
-Querying the webserver via xml request (to a custom API) and returning the times
+Querying the webserver via ajax request (to a custom API) and returning the times
 
 
 To run pull the repo from cloudpebble.com
