@@ -1,0 +1,21 @@
+[{
+        "title": "WTC Oculus",
+        "subtitle": "World Trade Center",
+        "stops": "From Newark:\nNewark Penn Station\nHarrison\nJournal Square\nGrove Street\nExchange Place\nWorld Trade Center\n\nFrom Hoboken:\nHoboken\nNewport\nExchange Place\nWorld Trade Center", 
+        "value": "World Trade Center"
+      }, {
+        "title": "JSQ/Newark Penn",
+        "subtitle": "Jersey City and Newark",
+        "stops": "From WTC:\nWorld Trade Center\nExchange Place\nGrove Street\nJournal Square\nHarrison\nNewark Penn Station",
+        "value": "Newark"
+      }, {
+        "title": "Hoboken",
+        "subtitle": "Hoboken Terminal",
+        "stops": "From 33rd St:\n33rd St\n23rd St\n14th St\n9th St\n Christopher St\nHoboken\n\n From WTC:\nWorld Trade Center\nExchange Place\nNewport\nHoboken",
+        "value": "Hoboken"
+      }, {
+        "title": "33rd St",
+        "subtitle": "33rd Street, NY",
+        "stops": "From Journal Square:\nJournal Square\nGrove Street\nNewport\nChristopher St\n9th St\n14th St\n 23rd St\n 33rd St\n\nFrom Hoboken:\nNewport\nChristopher St\n9th St\n14th St\n 23rd St\n 33rd St",
+        "value": "33rd Street"
+      }]
