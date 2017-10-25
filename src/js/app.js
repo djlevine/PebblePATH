@@ -7,6 +7,7 @@ var dir;
 //var minutes = '60';
 var varHlColor = '#0055AA';
 var times = [];
+var status = [];
 
 if (localStorage.getItem(0) === null || localStorage.getItem(1) === undefined){
     localStorage.setItem(0, 'A');
@@ -103,6 +104,7 @@ schedulemenu.on('select', function(event) {
   dir = direction[event.itemIndex].value;
   if (dir == 'quickSchedule'){quickScheduleSet();}
   else if (dir == 'Help'){Help.show();}
+  //else if (dir == 'Help'){Help.show();}
   else {stationsmenu.show();}
 });
 
@@ -131,9 +133,7 @@ stationsmenu.on('select', function(event) {
 function stationTime(station,dir){
 // Construct URL
   card.show();
-
   
-  console.log('station = ' + station.jsq + 'dir = ' + dir);
 if(station.jsq >= "yes" && dir=="Newark"){
     dir = "Journal Square";
   }
@@ -171,8 +171,45 @@ var URL = 'http://dlevine.us/pathdata/pathsched_legacy.php?q=' + station.value +
     }
   );
 }
-
-
+/* Don't remember why I kept this
+function pathStatus(){
+// Construct URL
+  card.show();
+  
+var URL = 'http://dlevine.us/travel/agency_data.php?q=path';
+  console.log(URL);
+  URL = encodeURI(URL);
+// Make the request
+  ajax(
+    {
+      url: URL,
+      type: 'json'
+    },
+    function(data) {
+      // Success!
+      //var title = 'Scheduled for:';
+      var key;
+      status = [];
+    
+      for(key in data) { 
+        if (data.hasOwnProperty(key)){		
+            status.push(data[key]);
+        }
+			}
+      //Create the time window for the user++
+      //createTimeWindow(dir);
+    },
+    function(error) {
+      // Failure!
+      var title = 'PebblePATH';
+      var sub = 'is currently unable to retrieve schedule data.';
+      card.title(title);
+      card.subtitle(sub);
+      card.body('');
+    }
+  );
+}
+*/
 function createTimeWindow(dir){
         // Create a dynamic window
       var timeWindow = new UI.Window({
