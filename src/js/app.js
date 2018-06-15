@@ -5,13 +5,14 @@
  */
 
 var UI = require('ui');
+var Vibe = require('ui/vibe');
 var ajax = require('ajax');
 var feature = require('platform/feature');
 var Vector2 = require('vector2');
 var station;
 var dir;
 var minutes;//='20';
-var varHlColor = feature.color('#0055AA', 'black');
+var varHlColor = '#0055AA';
 var times = [];
 var dest = [];
 var number = 0;
@@ -147,10 +148,10 @@ var settingsop= [{
 
 
 var schedulemenu = new UI.Menu({
-  highlightBackgroundColor:varHlColor,
+  highlightBackgroundColor: feature.color(varHlColor, 'black'),
   status: {
       separator: 'dotted',
-      backgroundColor: varHlColor,
+      backgroundColor: feature.color(varHlColor, 'black'),
       color: 'white'
   },
   sections: [{
@@ -159,20 +160,20 @@ var schedulemenu = new UI.Menu({
 });
 
 var settingsmenu = new UI.Menu({
-  highlightBackgroundColor:varHlColor,
+  highlightBackgroundColor: feature.color(varHlColor, 'black'),
   status: {
       separator: 'dotted',
-      backgroundColor: varHlColor,
+      backgroundColor: feature.color(varHlColor, 'black'),
       color: 'white'
   },
   sections: [{items: settingsop}]
 });
 
 var stationsmenu = new UI.Menu({
-  highlightBackgroundColor:varHlColor,
+  highlightBackgroundColor: feature.color(varHlColor, 'black'),
   status: {
       separator: 'dotted',
-      backgroundColor: varHlColor,
+      backgroundColor: feature.color(varHlColor, 'black'),
       color: 'white'
   },
     sections: [{
@@ -279,13 +280,28 @@ var URL = 'http://dlevine.us/pathdata/pathsched.php?q=' + station.value + /*'&di
       
       // Show to user
       card.hide();
-      
-      // Create a dynamic window
+      createTimeWindow();
+    },
+    function(error) {
+      // Failure!
+      var title = 'PebblePATH';
+      //var empty = '';
+      var sub = 'is currently unable to retrieve schedule data.';
+      card.title(title);
+      card.subtitle(URL);
+      card.body(sub);
+    }
+  );
+
+}
+
+function createTimeWindow(){
+        // Create a dynamic window
       var timeWindow = new UI.Window({
         status: {
           separator: 'dotted',
-          backgroundColor: varHlColor,
-          color:'white',
+          backgroundColor: feature.color(varHlColor, 'white'),
+          color:feature.color('white', 'black'),
         },
         backgroundColor: 'white'
       });
@@ -293,6 +309,7 @@ var URL = 'http://dlevine.us/pathdata/pathsched.php?q=' + station.value + /*'&di
       var screenHeight = timeWindow.size().y;
       var screenWidth = timeWindow.size().x;
       var titleArea = screenHeight/5.8;
+  
       var titleBar = new UI.Rect({ 
         position: new Vector2(0, 0),
         size: new Vector2(screenWidth, titleArea),
@@ -310,22 +327,46 @@ var URL = 'http://dlevine.us/pathdata/pathsched.php?q=' + station.value + /*'&di
         text:times[number],
         color: 'black',
         textAlign: 'center',
-        size: new Vector2(screenWidth, 30),
-        position:new Vector2(0, titleArea),
-        font: 'gothic-28-bold'
-      }); 
-      var destText = new UI.Text({ 
-        text:'Towards: \n' + dest[number],
+        size: new Vector2(screenWidth, screenHeight/2),
+        position:new Vector2(0, feature.round(screenHeight/4-10, screenHeight/3 - 8)),
+        font: 'bitham-42-bold'
+      });
+      var towardsText = new UI.Text({ 
+        text:'Towards:',
         color: 'black',
         textAlign: 'center',
-        size: new Vector2(screenWidth, screenHeight - titleArea - 30),
-        position:new Vector2(0, titleArea + 30),
+        size: new Vector2(screenWidth, titleArea),
+        position:new Vector2(0,  feature.round(screenHeight - titleArea*3 - 5, screenHeight - titleArea*2 + 5)),
         font: 'gothic-18-bold'
+      });
+      var footerBar = new UI.Rect({ 
+        position: new Vector2(0, feature.round(screenHeight-titleArea*2-10, screenHeight-titleArea+1)),
+        size: new Vector2(screenWidth, titleArea),
+        backgroundColor: 'black'
+      });
+      var destText = new UI.Text({ 
+        text:dest[number],
+        color: feature.color('#FFDD00', 'white'),
+        textAlign: 'center',
+        size: new Vector2(screenWidth, titleArea),
+        position:new Vector2(0, feature.round(screenHeight - titleArea*2 - 12, screenHeight - titleArea - 2)),
+        font: 'gothic-24-bold'
+      });
+      var roundFooter = new UI.Rect({ 
+        position: new Vector2(0, screenHeight-titleArea-10),
+        size: new Vector2(screenWidth, titleArea + 4),
+        backgroundColor: feature.color(varHlColor, 'white')
       });//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       timeWindow.add(titleBar);
+      timeWindow.add(footerBar);
       timeWindow.add(title);
       timeWindow.add(nextTime);
+      timeWindow.add(towardsText);
       timeWindow.add(destText);
+      if (feature.round()) {
+        timeWindow.add(roundFooter);
+        console.log('Round display');
+      }
       timeWindow.show();
       timeWindow.on('click', 'up', function() {
         change("up", timeWindow);
@@ -336,30 +377,23 @@ var URL = 'http://dlevine.us/pathdata/pathsched.php?q=' + station.value + /*'&di
       timeWindow.on('click', 'back', function() {
         change("back", timeWindow);
       });
-    },
-    function(error) {
-      // Failure!
-      var title = 'PebblePATH';
-      //var empty = '';
-      var sub = 'is currently unable to retrieve schedule data.';
-      card.title(title);
-      card.subtitle(URL);
-      card.body(sub);
-    }
-  );}
+}
 
 function change(button, window){
-  if(button == "up"){number = number + 1;}
-  else if (button == "down"){number = number - 1;}
+  if(button == "up"){if(number !== times.length-1) {number = number + 1;} else{Vibe.vibrate('short');}}
+  else if (button == "down"){
+    if(number !== 0){number = number - 1;} else{Vibe.vibrate('short');}
+  }//number = times.length-1;}}
   else{
-    console.log("reached other button");
+    //console.log("reached other button");
     stationsmenu.show();
+    number = 0;
     card.hide();
     window.hide();
     return;
   }
-  console.log(button + ' clicked! number = ' + number);
-  stationTime(station, dir, minutes);
-  card.show();
+  //console.log(button + ' clicked! number = ' + number);
+  //stationTime(station, dir, minutes);
   window.hide();
+  createTimeWindow();
 }
